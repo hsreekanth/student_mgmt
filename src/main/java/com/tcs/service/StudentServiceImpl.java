@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.tcs.entities.StudentEntity;
+import com.tcs.exception.ResourceNotFoundException;
 import com.tcs.model.StudentInfo;
 import com.tcs.repositories.StudentInfoRepository;
 @Service
@@ -25,8 +26,9 @@ public class StudentServiceImpl implements StudentService {
 	}
 
 	@Override
-	public StudentInfo getStudentInfo(Long studentId) {
-		StudentEntity studInfo= studRepo.findById(studentId).get();
+	public StudentInfo getStudentInfo(Long studentId) throws ResourceNotFoundException {
+		StudentEntity studInfo= studRepo.findById(studentId)
+				.orElseThrow(()-> new ResourceNotFoundException("student not found with given Id ::"+studentId));
 		StudentInfo info=new StudentInfo();
 		BeanUtils.copyProperties(studInfo, info);
 		return info;
